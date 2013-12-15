@@ -2,11 +2,15 @@ package main
 
 import (
 	"os"
+	"fmt"
 	"bufio"
+	"bytes"
+	"regexp"
 	"os/exec"
 	"io/ioutil"
 )
 
+// TODO: how to handle lots of printlns that accumulate over time
 func main() {
 	println("starting REPL...")
 
@@ -26,20 +30,27 @@ func main() {
 		updateTempfile(userInputHistory, file)
 		writeTempfileFooter(file)
 
-		cmd := exec.Command("/usr/local/go/bin/go", "run", file.Name())
-		out, err := cmd.Output()
-		if err != nil {
-			println("compiler is PISSED")
-			println(err.Error())
-
-			// fall back, removing this line?
-			// TODO: think about multi-line
-			// TODO: think about adding / removing import statements?
+		_, formatErr := exec.Command("go", "fmt", file.Name()).Output()
+		if formatErr != nil {
+			println(fmt.Sprintf("unexpected error formatting: %s", formatErr.Error()))
+			os.Exit(1)
 		}
 
-		println(string(out))
+		cmd := exec.Command("go", "run", file.Name())
+		out, err := cmd.Output()
+
+		if err != nil {
+			println(fmt.Sprintf("Compiler is PISSED. Error: %s", err.Error()))
+			userInputHistory = userInputHistory[:len(userInputHistory) - 1]
+
+			// TODO: consider falling back to the last known good compilation state41
+			// TODO: think about multi-line (open curly, etc)
+			// TODO: think about adding / removing import
+			} else {
+			fmt.Print(string(bytes.Join(regexp.MustCompile(".*s\n").FindAll(out, -1), nil)))
+			println(fmt.Sprintf("we read %d characters of output: '%s'", len(out), out))
+		}
 	}
-	// TODO: how to handle lots of printlns that accumulate over time
 }
 
 func readInput() string {
@@ -57,7 +68,24 @@ func createTempfile() *os.File {
 		os.Exit(1)
 	}
 
-	return file
+	file.Close()
+
+	properName := file.Name() + ".go"
+	mvCmd := exec.Command("mv", file.Name(), properName)
+	_, mvErr := mvCmd.Output()
+
+	if mvErr != nil {
+		println(fmt.Sprintf("could not move tempfile %s to %s. Bailing.", file.Name(), properName))
+		os.Exit(1)
+	}
+
+	renamedFile, err := os.OpenFile(properName, os.O_RDWR, 0)
+	if err != nil {
+		println(fmt.Sprintf("could not open tempfile %s. Bailing.", properName))
+		os.Exit(1)
+	}
+
+	return renamedFile
 }
 
 func updateTempfile(lines []string, filehandle *os.File) {
@@ -66,12 +94,15 @@ func updateTempfile(lines []string, filehandle *os.File) {
 
 		if err != nil {
 			println("shit, couldn't append to file. BAILING!")
-			println(status, err)
+			println(fmt.Sprintf("%#v, %s", status, err.Error()))
 			os.Exit(1)
 		}
 	}
 }
 
+// TODO: keep track of packages we might need to import
+// should be fast enough on error to just re-compile
+// with missing packages / without extra imports
 func writeTempfileHeader(file *os.File) {
 	file.WriteString("package main\n func main() {\n")
 }

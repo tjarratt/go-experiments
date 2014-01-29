@@ -25,7 +25,7 @@ func main() {
 			return false
 		}
 
-		fmt.Printf("%#v\n", node)
+		fmt.Printf("%p %#v\n", node, node)
 		return true
 	})
 

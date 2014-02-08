@@ -10,7 +10,7 @@ import(
 
 func main() {
 	if len(os.Args) != 2 {
-		println("expected exactly one arg: path to a file to inspect")
+		println("usage: dump_ast  path/to/a/file.go")
 		os.Exit(1)
 	}
 

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+ext=".go"
+replace=""
+
+for file in *.go
+do
+    go build -o tmp/${file/$ext/$replace} $file
+done

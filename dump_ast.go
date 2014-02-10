@@ -1,11 +1,11 @@
 package main
 
-import(
+import (
 	"fmt"
-	"os"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"os"
 )
 
 func main() {

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"bufio"
 	"bytes"
-	"regexp"
-	"os/exec"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"os/exec"
+	"regexp"
 )
 
 // TODO: how to handle lots of printlns that accumulate over time
@@ -41,12 +41,12 @@ func main() {
 
 		if err != nil {
 			println(fmt.Sprintf("Compiler is PISSED. Error: %s", err.Error()))
-			userInputHistory = userInputHistory[:len(userInputHistory) - 1]
+			userInputHistory = userInputHistory[:len(userInputHistory)-1]
 
 			// TODO: consider falling back to the last known good compilation state41
 			// TODO: think about multi-line (open curly, etc)
 			// TODO: think about adding / removing import
-			} else {
+		} else {
 			fmt.Print(string(bytes.Join(regexp.MustCompile(".*s\n").FindAll(out, -1), nil)))
 			println(fmt.Sprintf("we read %d characters of output: '%s'", len(out), out))
 		}

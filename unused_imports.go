@@ -1,9 +1,9 @@
 package main
 
-import(
+import (
 	"bufio"
 	"os"
-  "os/exec"
+	"os/exec"
 )
 
 func main() {
@@ -11,7 +11,6 @@ func main() {
 		println("usage: used_imports path/to/some/file.go")
 		os.Exit(1)
 	}
-
 
 	cmd := exec.Command("go", "build", os.Args[1])
 	stderr, err := cmd.StderrPipe()

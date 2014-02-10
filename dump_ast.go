@@ -22,10 +22,20 @@ func main() {
 
 	ast.Inspect(rootNode, func(node ast.Node) bool {
 		if node == nil {
-			return false
+			return true
 		}
 
-		fmt.Printf("%p %#v\n", node, node)
+		switch node := node.(type) {
+		case *ast.Ident:
+			if node.Obj != nil {
+				fmt.Printf("%p %#v\n%p %#v\n", node, node, node.Obj, node.Obj)
+			} else {
+				fmt.Printf("%p %#v\n", node, node)
+			}
+		default:
+			fmt.Printf("%p %#v\n", node, node)
+		}
+
 		return true
 	})
 

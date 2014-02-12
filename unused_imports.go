@@ -19,17 +19,15 @@ func main() {
 		os.Exit(2)
 	}
 
-	err = cmd.Run()
-	if err == nil {
-		println("no unused imports.")
-		os.Exit(0)
+	cmd.Start()
+	r := bufio.NewReader(stderr)
+	for {
+		line, _, err := r.ReadLine()
+		if err != nil {
+			break
+		}
+		println(string(line))
 	}
-
-	line, err := bufio.NewReader(stderr).ReadString('\n')
-	if err != nil {
-		println("uh oh")
-	}
-	println("output", line)
 
 	return
 }

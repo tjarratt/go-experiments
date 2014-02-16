@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"os/exec"
+	"regexp"
 )
 
 func main() {
@@ -21,13 +22,19 @@ func main() {
 
 	cmd.Start()
 	r := bufio.NewReader(stderr)
+	importRegex := regexp.MustCompile("imported and not used: \"(.*)\"")
 	for {
 		line, _, err := r.ReadLine()
 		if err != nil {
 			break
 		}
-		println(string(line))
-	}
 
+		matches := importRegex.FindAllStringSubmatch(string(line), 1)
+		if matches == nil {
+			continue
+		}
+
+		println(matches[0][1])
+	}
 	return
 }

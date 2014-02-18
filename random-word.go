@@ -4,14 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 )
 
 var (
-	separator string
+	separator     string
 	numberOfWords int
 )
 
@@ -38,7 +38,7 @@ func main() {
 
 	pieces := []string{}
 	for i := 0; i < numberOfWords; i++ {
-		pieces = append(pieces, words[rand.Int() % len(words)])
+		pieces = append(pieces, words[rand.Int()%len(words)])
 	}
 
 	println(strings.Join(pieces, separator))

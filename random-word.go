@@ -7,6 +7,7 @@ import (
 	"os"
 	"math/rand"
 	"strings"
+	"time"
 )
 
 var (
@@ -33,8 +34,10 @@ func main() {
 	}
 
 	flag.Parse()
+	rand.Seed(time.Now().Unix())
+
 	pieces := []string{}
-	for i := 0; i < numberOfWords; i++ { // FIXME: rand should be seeded
+	for i := 0; i < numberOfWords; i++ {
 		pieces = append(pieces, words[rand.Int() % len(words)])
 	}
 

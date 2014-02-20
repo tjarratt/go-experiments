@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"strings"
@@ -42,22 +41,6 @@ func main() {
 	}
 
 	println(strings.Join(pieces, separator))
-	return
-}
-
-// this will fail horribly on windows
-func readAvailableDictionary() (words []string, err error) {
-	file, err := os.Open("/usr/share/dict/words")
-	if err != nil {
-		return
-	}
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return
-	}
-
-	words = strings.Split(string(bytes), "\n")
 	return
 }
 
